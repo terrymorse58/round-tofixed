@@ -19,7 +19,7 @@ Math.roundDec(x, decimals)
 #### Parameters
 `x` - a number to round off
 
-`decimals` - the number of decimals (default is zero)
+`decimals` - the number of decimals (optional, defaults to zero)
 
 #### Return Value
 The value of `x` rounded to `decimals` places
