@@ -4,6 +4,21 @@ Some simple but useful additions to javascript Math module
 
 ---
 
+## Usage
+
+Simply including the `mathmods.js` file will make the addtions to `Math`.
+
+
+````js
+// using CommonJS
+require("mathmods.js");
+````
+
+````html
+<!-- from an HTML file -->
+<script src="mathmods.js"></script>
+````
+
 ## Math.roundDec()
 
 
