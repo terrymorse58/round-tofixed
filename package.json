@@ -1,0 +1,19 @@
+{
+  "name": "mathmods",
+  "version": "1.0.0",
+  "description": "some useful additions to Math module",
+  "main": "mathmods.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terrymorse58/mathmods.git"
+  },
+  "author": "Terry Morse",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/terrymorse58/mathmods/issues"
+  },
+  "homepage": "https://github.com/terrymorse58/mathmods#readme"
+}

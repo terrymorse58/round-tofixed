@@ -22,8 +22,8 @@ require("mathmods.js");
 ## Math.roundDec()
 
 
-Rounds a number to specified decimal places, because built-in `Math.round
-()` only rounds to integers values.
+Rounds a number to specified decimal places, because built-in `Math.round()`
+only rounds to integers values.
 
 ### Syntax
 
