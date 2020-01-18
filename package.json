@@ -4,7 +4,7 @@
   "description": "some useful additions to Math module",
   "main": "mathmods.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/testround"
   },
   "repository": {
     "type": "git",

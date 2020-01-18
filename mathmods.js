@@ -5,13 +5,29 @@
   }
 
   /**
-   * round number `x` to `decimals` number of places
+   * obtain a number's mantissa and exponent
+   * @param {number} val
+   * @return {number[]} 2-element array containing mantissa, exponent
+   */
+  function separateFloat(val) {
+    return Number(val)
+      .toExponential()
+      .split("e")
+      .map(str => +str);
+  }
+
+  /**
+   * round number `x` to `digits` number of digits after decimal point
    * @param {number} x
-   * @param {number} [decimals=0]
+   * @param {number} [digits=0]
    * @return {number}
    */
-  Math.roundDec = function (x, decimals) {
-    decimals = decimals || 0;
-    return Number(Math.round(Number(x + 'e' + decimals)) + 'e-' + decimals);
+  Math.roundDec = function (x, digits = 0) {
+    let [mant, exp] = separateFloat(x);
+    let xNew = +(mant + "e" + (exp + digits));
+    [mant, exp] = separateFloat(Math.round(xNew));
+    xNew = +(mant + "e" + (exp - digits));
+    return xNew;
   };
+
 })();

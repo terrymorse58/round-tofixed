@@ -6,7 +6,7 @@ Some simple but useful additions to javascript Math module
 
 ## Usage
 
-Simply including the `mathmods.js` file will make the addtions to `Math`.
+Simply including the `mathmods.js` file will make the additions to `Math`.
 
 
 ````js
@@ -28,16 +28,17 @@ only rounds to integers values.
 ### Syntax
 
 ```js
-Math.roundDec(x, decimals)
+Math.roundDec(x, digits)
 ```
 
 #### Parameters
 `x` - a number to round off
 
-`decimals` - the number of decimals (optional, defaults to zero)
+`decimals` - the number of digits after decimal point (optional, defaults to
+ zero)
 
 #### Return Value
-The value of `x` rounded to `decimals` places
+The value of `x` rounded to `digits` decimal places
 
 ---
 
