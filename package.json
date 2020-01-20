@@ -1,6 +1,6 @@
 {
   "name": "mathmods",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "some useful additions to Math module",
   "main": "mathmods.js",
   "scripts": {
@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/terrymorse58/mathmods/issues"
   },
-  "homepage": "https://github.com/terrymorse58/mathmods#readme"
+  "homepage": "https://github.com/terrymorse58/mathmods#readme",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+  }
 }

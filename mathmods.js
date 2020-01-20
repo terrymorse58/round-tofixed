@@ -5,15 +5,26 @@
   }
 
   /**
-   * obtain a number's mantissa and exponent
-   * @param {number} val
-   * @return {number[]} 2-element array containing mantissa, exponent
+   * floating point object
+   * @typedef {Object} Float
+   * @property {number} mant - the mantissa
+   * @property {number} exp - the exponent
    */
-  function separateFloat(val) {
-    return Number(val)
+
+  /**
+   * convert number to Float object
+   * @param {number} val
+   * @return {Float}
+   */
+  function numToFloat (val) {
+    const [mant, exp] = Number(val)
       .toExponential()
-      .split("e")
+      .split('e')
       .map(str => +str);
+    return {
+      mant,
+      exp
+    };
   }
 
   /**
@@ -23,11 +34,10 @@
    * @return {number}
    */
   Math.roundDec = function (x, digits = 0) {
-    let [mant, exp] = separateFloat(x);
-    let xNew = +(mant + "e" + (exp + digits));
-    [mant, exp] = separateFloat(Math.round(xNew));
-    xNew = +(mant + "e" + (exp - digits));
-    return xNew;
+    const xF = numToFloat(x);
+    const xFNew = numToFloat(
+      Math.round(+(xF.mant + 'e' + (xF.exp + digits))));
+    return +(xFNew.mant + 'e' + (xFNew.exp - digits));
   };
 
 })();
