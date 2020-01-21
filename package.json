@@ -1,6 +1,6 @@
 {
   "name": "mathmods",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "some useful additions to Math module",
   "main": "mathmods.js",
   "scripts": {
@@ -19,6 +19,5 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
