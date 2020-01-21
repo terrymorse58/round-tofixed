@@ -11,7 +11,7 @@ Simply including the `mathmods.js` file will make the additions to `Math`.
 
 ````js
 // using CommonJS
-require("mathmods.js");
+require("mathmods");
 ````
 
 ````html
@@ -45,7 +45,7 @@ The value of `x` rounded to `digits` decimal places
  methods, all of which produce wrong results in certain cases.
 
 The most popular method for rounding a decimal number is:
- ````
+ ````js
  Number.toFixed(digits)
 ````
 However, when a number ends in 5, it rounds down instead of up about 45% of
@@ -53,7 +53,7 @@ the time.
 
 Another popular method is **Multiply-and-divide**:
 
-````
+````js
 Math.round( x * (10 ** digits) ) / (10 ** digits);
 ````
 While better than using `Number.toFixed()`, it rounds numbers ending in 5
@@ -61,7 +61,7 @@ While better than using `Number.toFixed()`, it rounds numbers ending in 5
  
 A more accurate method is **Exponent add-and-subtract**:
 
-````
+````js
 Math.round( x + 'e' + digits ) + 'e-' + digits;
 ````
 Exponent add-and-subtract rounds numbers ending in 5 incorrectly only about
