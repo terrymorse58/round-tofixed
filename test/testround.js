@@ -1,21 +1,28 @@
 // test rounding of numbers
+"use strict";
 
-require('../mathmods');
-
-const MULT_DIV = 'multiply-divide', TO_FIXED = 'toFixed()',
-  EXP_PLUS_MINUS = 'exp +/-', ROUND_DEC = 'roundDec()';
+const roundToFixed = require('../round-tofixed');
 
 let errors = [];
+let methods = [
+  'Number.toFixed',
+  'multiply-then-divide',
+  'exponent +/-',
+  'roundToFixed'
+];
+const TO_FIXED = methods[0],
+  MULT_DIV = methods[1],
+  EXP_PM = methods[2],
+  R_TF = methods[3];
 
-let summary = {
-  testCount: 0,
-  errCount: {
-    'toFixed()': 0,
-    'multiply-divide': 0,
-    'exp +/-': 0,
-    'roundDec()': 0
-  }
-};
+const errCount = {}, errSum = {};
+
+methods.forEach(method => {
+  errCount[method] = errSum[method] = 0;
+});
+let testCount = 0;
+
+console.error("Testing different rounding methods...");
 
 // test 3 different methods of rounding with integer `int` + [0.5, 0.05, ...]
 function testRound (int) {
@@ -32,7 +39,7 @@ function testRound (int) {
       break;
     }
 
-    summary.testCount++;
+    testCount++;
 
     let x = int + fract;
 
@@ -50,24 +57,25 @@ function testRound (int) {
     // Math.round(num + "e+n") + "e-n" method
     let efResult = +(Math.round(+(x + 'e' + digits)) + ('e-' + digits));
 
-    // roundDec() method
-    let rdResult = Math.roundDec(x, digits);
+    // roundToFixed() method
+    let rdResult = roundToFixed(x, digits);
 
     result.push({
       x,
       'digits': digits,
       'round exact': xrExact,
-      MULT_DIV: mdResult,
-      'm-d error': (mdResult === xrExact) ? null : (mdResult - xrExact),
-      TO_FIXED: tfResult,
-      'toFixed error': (tfResult === xrExact ? null : (tfResult - xrExact)),
-      EXP_PLUS_MINUS: efResult,
+      'm-t-d': mdResult,
+      'm-t-d error': (mdResult === xrExact) ? null : (mdResult - xrExact),
+      'toFixed': tfResult,
+      'tF error': (tfResult === xrExact ? null : (tfResult - xrExact)),
+      'exp +/-': efResult,
       'exp +/- error': (efResult === xrExact) ? null : (efResult - xrExact),
-      ROUND_DEC: rdResult,
-      'roundDec error': ((rdResult === xrExact) ? null : (rdResult - xrExact))
+      'roundToFixed': rdResult,
+      'rTF error': ((rdResult === xrExact) ? null : (rdResult - xrExact))
     });
 
-    function logErrors (method, x, digits, error) {
+    function logErrors (method, x, digits, result, exact) {
+      const error = result - exact;
       if (error || Number.isNaN(error)) {
         errors.push({
           'method': method,
@@ -75,50 +83,75 @@ function testRound (int) {
           'round digits': digits,
           'error': error
         });
-        summary.errCount[method]++;
+        errCount[method]++;
+        if (errSum[method] === "Error" || Number.isNaN(error)) {
+          errSum[method] = "Error";
+        } else if (exact !== 0) {
+          errSum[method] += error / exact;
+        }
       }
     }
 
-    logErrors(MULT_DIV, x, digits, (mdResult - xrExact));
-    logErrors(TO_FIXED, x, digits, (tfResult - xrExact));
-    logErrors(EXP_PLUS_MINUS, x, digits, (efResult - xrExact));
-    logErrors(ROUND_DEC, x, digits, (rdResult - xrExact));
+    logErrors(MULT_DIV, x, digits, mdResult, xrExact);
+    logErrors(TO_FIXED, x, digits, tfResult, xrExact);
+    logErrors(EXP_PM, x, digits, efResult, xrExact);
+    logErrors(R_TF, x, digits, rdResult, xrExact);
 
   }
 
-  //console.table(result);
-  //console.log('\n\n');
+  // console.table(result);
+  // console.log('\n\n');
 }
 
-console.log('Testing 4 different methods of decimal number rounding:\n' +
-  '    • Number.toFixed()\n' +
-  '    • Multiply-and-divide\n' +
-  '    • Exponent-add-and-subtract\n' +
-  '    • Math.roundDec()\n');
+let heading =
+  `Testing ${methods.length} different methods of decimal number rounding:\n`;
+methods.forEach(method => {
+  heading += `    • ${method}\n`;
+});
+console.log(heading);
 
 testRound(0);
 testRound(1);
 testRound(15);
 
 // test with random ints
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 10000; i++) {
   let int = Math.round(Math.random() * 100);
   testRound(int);
 }
 
 const errPct = function (method) {
-  const errval = summary.errCount[method];
-  return +(errval/summary.testCount * 100).toFixed(2) + '%';
-}
+  const errval = errCount[method];
+  return +(errval/testCount * 100).toFixed(2) + '%';
+};
 
-console.log('Summary:\n',
-  '  Total tests: ', summary.testCount, '\n',
-  '  Errors:\n',
-  '    Number.toFixed():          ', summary.errCount[TO_FIXED], ` (${errPct(TO_FIXED)})\n`,
-  '    Multiply-and-divide:       ', summary.errCount[MULT_DIV], ` (${errPct(MULT_DIV)})\n`,
-  '    Exponent-add-and-subtract: ', summary.errCount[EXP_PLUS_MINUS], ` (${errPct(EXP_PLUS_MINUS)})\n`,
-  '    Math.roundDec:             ', summary.errCount[ROUND_DEC], ` (${errPct(ROUND_DEC)})\n`
-);
+const errAvg = function (method) {
+  if (errSum[method] === 'Error') {
+    return 'Error';
+  }
+  let rVal = (errCount[method]) ? errSum[method] / errCount[method] : 0;
+  rVal = rVal.toPrecision(4);
+  return rVal;
+};
+
+
+const report = 'Summary:\n' +
+  `  Total tests: ${testCount}\n` +
+  `  Errors:\n\n`;
+
+const summary = [];
+methods.forEach(method => {
+  summary.push({
+    'Method': method,
+    'Errors': errCount[method],
+    'Percent': errPct(method),
+    'Avg Err': errAvg(method)
+  })
+});
+
+console.log(report);
+console.table(summary);
+console.error('Test complete.');
 
 //console.log('Errors:\n');
 //console.table(errors);

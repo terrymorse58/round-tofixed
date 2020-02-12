@@ -1,21 +1,21 @@
 {
-  "name": "mathmods",
-  "version": "1.1.2",
-  "description": "some useful additions to Math module",
-  "main": "mathmods.js",
+  "name": "round-tofixed",
+  "version": "1.2.0",
+  "description": "Correctly round JavaScript numbers to a fixed number of decimal places",
+  "main": "index.js",
   "scripts": {
-    "test": "node test/testround"
+    "test": "node test/testround > test/testround-out.txt"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/terrymorse58/mathmods.git"
+    "url": "git+https://github.com/terrymorse58/round-tofixed.git"
   },
   "author": "Terry Morse",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/terrymorse58/mathmods/issues"
+    "url": "https://github.com/terrymorse58/round-tofixed/issues"
   },
-  "homepage": "https://github.com/terrymorse58/mathmods#readme",
+  "homepage": "https://github.com/terrymorse58/round-tofixed#readme",
   "directories": {
     "test": "test"
   },

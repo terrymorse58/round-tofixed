@@ -1,0 +1,19 @@
+Testing 4 different methods of decimal number rounding:
+    • Number.toFixed
+    • multiply-then-divide
+    • exponent +/-
+    • roundToFixed
+
+Summary:
+  Total tests: 135012
+  Errors:
+
+
+┌─────────┬────────────────────────┬────────┬──────────┬─────────────┐
+│ (index) │         Method         │ Errors │ Percent  │   Avg Err   │
+├─────────┼────────────────────────┼────────┼──────────┼─────────────┤
+│    0    │    'Number.toFixed'    │ 62115  │ '46.01%' │ '-0.004998' │
+│    1    │ 'multiply-then-divide' │  7981  │ '5.91%'  │ '-0.007142' │
+│    2    │     'exponent +/-'     │  504   │ '0.37%'  │   'Error'   │
+│    3    │     'roundToFixed'     │   0    │   '0%'   │   '0.000'   │
+└─────────┴────────────────────────┴────────┴──────────┴─────────────┘
