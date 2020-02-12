@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Borwser Test</title>
+</head>
+<body>
+<h1>Test of roundToFixed() from Browser</h1>
+<p>Open the console window.</p>
+<script src="../round-tofixed.js"></script>
+<script>
+  console.log("roundToFixed:",roundToFixed);
+  console.log('typeof roundToFixed:', typeof roundToFixed);
+  const pi = 3.141592654;
+
+  const numRound = roundToFixed(pi, 5);
+  console.log('roundToFixed(pi, 5) :', numRound);
+
+  const numBad = roundToFixed("hello");
+  console.log('roundToFixed("hello") :', numBad);
+
+  const numBad2 = roundToFixed(pi, 4.1);
+  console.log('roundToFixed(pi, 4.1) :', numBad2);
+</script>
+</body>
+</html>

@@ -8,7 +8,7 @@ const tasks = [];
 const INDEX_FILE = 'index.js';
 const MINIFY_INDEX = 'minifyindex';
 
-const BROWSER_FILE = 'serialize-any.js';
+const BROWSER_FILE = 'round-tofixed.js';
 const MINIFY_BROWSER = 'minifybrowser';
 
 // minify INDEX_FILE

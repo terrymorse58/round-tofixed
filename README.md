@@ -5,18 +5,18 @@ Correctly round JavaScript numbers to a fixed number of decimal places
 ## Overview
 **round-tofixed** solves common problems when rounding decimal numbers in JavaScript:
 - the *Math.round()* built-in function only rounds to integers
-- commonly used rounding methods for decimal numbers are inaccurate
+- commonly used rounding methods for decimal numbers produce incorrect results
 
 #### Rounding Method Comparison
 
-Test results of rounding 135,048 different numbers:
+Test results of rounding 1,040,000 random numbers that end with a '5':
 
-Method                 | Errors | Percent of total  |   Avg Err
+Method                 | Errors | Fraction of total |   Avg Err Ratio
 ---------------------- | ------ | ----------------  | ----------
-Number.toFixed         | 62,099 | 45.98%            | -0.005243
-multiply-then-divide   |  8,115 | 6.01%             | -0.007622
-exponent +/-           |   549  |  0.41%            |  ***NaN***
-**roundToFixed**       |   0    |   0%              |   0
+Number.toFixed         | 93,686 | 9.008 %           |  0.03391
+multiply-then-divide   |  7,780 | 0.7481 %          |  0.005592
+exponent +/-           |   549  | 0.6602 %          |  ***NaN***
+**round-tofixed**       |   0    | 0 %               |  0
 
 ## Usage
 Node.js:
@@ -27,9 +27,11 @@ const roundToFixed = require("round-to-fixed");
 
 ````html
 <!-- from an HTML file -->
-<script src="mathmods.js"></script>
+<script src="round-tofixed.min.js"></script>
 ````
 ---
+## Function
+
 ## `roundToFixed()`
 
 
@@ -46,39 +48,44 @@ roundToFixed(num [, digits])
 &nbsp; &nbsp; &nbsp; (number) - The number to round off
 
 `digits`<br>
- &nbsp; &nbsp; &nbsp; (number) - the number of digits after decimal point<br>
- &nbsp; &nbsp; &nbsp; (optional, defaults to zero)
+ &nbsp; &nbsp; &nbsp; (positive integer) **[optional]**- the number of digits after decimal point<br>
+ &nbsp; &nbsp; &nbsp; Defaults to zero.
 
 #### Return Value
-(number) - The value of `x` rounded to `digits` decimal places
+(number) - The value of `num` rounded to `digits` decimal places. Returns `NaN` on invalid inputs.
 
+---
 #### Technical Details
-**roundtoFixed** avoids the problems of commonly used rounding methods, all of which produce incorrect results in certain cases.
+**round-tofixed** avoids the problems of commonly used rounding methods, all of which produce incorrect results in certain cases.
 
-The most popular method for rounding a decimal number is:
+The most commonly used method for rounding a decimal number is **Number.toFixed**:
  ````js
  Number.toFixed(digits)
 ````
-However, when a number ends in 5, it rounds in the wrong direction about 45% of the time.
+However, when a number ends in 5, it sometimes rounds in the wrong direction.
 
-Another popular method is **Multiply-and-divide**:
+Another popular method is **multiply-then-divide**:
 
 ````js
 Math.round( x * (10 ** digits) ) / (10 ** digits);
 ````
-While more accurate than using *Number.toFixed()*, it rounds numbers ending in 5 incorrectly about 6% of the time.
+While more accurate than using *Number.toFixed()*, it still rounds numbers ending in 5 incorrectly.
  
-A more accurate method is **Exponent add-and-subtract**:
+A more accurate method is **exponent add-and-subtract**:
 
 ````js
 Math.round( x + 'e' + digits ) + 'e-' + digits;
 ````
-*Exponent add-and-subtract* rounds numbers ending in 5 incorrectly only about 0.47% of the time. But it fails completely for numbers smaller than 1e-6, with a `NaN` result.
+*Exponent add-and-subtract* rounds numbers correctly. But it has a fatal flaw—for input values smaller than 1e-6, it returns `NaN`.
 
-**roundToFixed** uses a method similar to Exponent add-and-subtract method, but it avoids the `NaN` result, rounding correctly for all values.
+**round-tofixed** uses the *exponent add-and-subtract* method, but it avoids the `NaN` result, rounding correctly for all values.
 
 ---
+#### Limitations
 
+Because JavaScript numbers have about 16 digits of precision, **round-tofixed** produces inaccurate results with precision requests above 15.
+
+---
 ## License
 
 MIT license.

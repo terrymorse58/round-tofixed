@@ -1,157 +1,157 @@
 // test rounding of numbers
 "use strict";
 
-const roundToFixed = require('../round-tofixed');
+const roundToFixed = require('../index.js');
 
-let errors = [];
 let methods = [
-  'Number.toFixed',
-  'multiply-then-divide',
-  'exponent +/-',
-  'roundToFixed'
+  [
+    'Number.toFixed',
+    (val, digits) => { // Number.toFixed
+      return +(Number(val).toFixed(digits));
+    },
+  ],
+  [
+    'multiply-then-divide',
+    (val, digits) => { // multiply-then-divide
+      let mult = '1e' + digits;
+      return Math.round(val * mult) / mult;
+    },
+  ],
+  [
+    'exponent +/-',
+    (val, digits) => { // exponent +/-
+      return +(Math.round(+(val + 'e' + digits)) + ('e-' + digits));
+    },
+  ],
+  [
+    'roundToFixed',
+    (val, digits) => roundToFixed(val, digits),
+  ]
 ];
-const TO_FIXED = methods[0],
-  MULT_DIV = methods[1],
-  EXP_PM = methods[2],
-  R_TF = methods[3];
-
-const errCount = {}, errSum = {};
 
 methods.forEach(method => {
-  errCount[method] = errSum[method] = 0;
+  method.push({errCount: 0, errSum: 0});
 });
+
+
 let testCount = 0;
+let errors = [];
 
 console.error("Testing different rounding methods...");
 
-// test 3 different methods of rounding with integer `int` + [0.5, 0.05, ...]
-function testRound (int) {
-  const levels = 18;
-  let result = [];
+function testRandom(digits, shift) {
+  const [test, exact] = randomTestVal(digits, shift);
+  // console.log(`test: ${test}, exact: ${exact}`);
 
-  for (let depth = 1; depth <= levels; depth++) {
-    let digits = depth - 1;
-    let fract = +('5e-' + depth);
-
-    // stop evaluating when fract is too small to matter
-    let testFract = (int) ? fract / int : fract;
-    if (testFract < Number.EPSILON * 5) {
-      break;
-    }
-
+  // loop through each method
+  methods.forEach(method => {
     testCount++;
-
-    let x = int + fract;
-
-    // exact result
-    let fractround = +('1e-' + digits);
-    let xrExact = int + fractround;
-
-    // multiply-and-divide method
-    let mult = '1e' + digits;
-    let mdResult = Math.round(x * mult) / mult;
-
-    // toFixed() method
-    let tfResult = +(Number(x).toFixed(digits));
-
-    // Math.round(num + "e+n") + "e-n" method
-    let efResult = +(Math.round(+(x + 'e' + digits)) + ('e-' + digits));
-
-    // roundToFixed() method
-    let rdResult = roundToFixed(x, digits);
-
-    result.push({
-      x,
-      'digits': digits,
-      'round exact': xrExact,
-      'm-t-d': mdResult,
-      'm-t-d error': (mdResult === xrExact) ? null : (mdResult - xrExact),
-      'toFixed': tfResult,
-      'tF error': (tfResult === xrExact ? null : (tfResult - xrExact)),
-      'exp +/-': efResult,
-      'exp +/- error': (efResult === xrExact) ? null : (efResult - xrExact),
-      'roundToFixed': rdResult,
-      'rTF error': ((rdResult === xrExact) ? null : (rdResult - xrExact))
-    });
-
-    function logErrors (method, x, digits, result, exact) {
-      const error = result - exact;
-      if (error || Number.isNaN(error)) {
-        errors.push({
-          'method': method,
-          'input value': x,
-          'round digits': digits,
-          'error': error
-        });
-        errCount[method]++;
-        if (errSum[method] === "Error" || Number.isNaN(error)) {
-          errSum[method] = "Error";
-        } else if (exact !== 0) {
-          errSum[method] += error / exact;
-        }
-      }
+    const result = method[1](test, digits-1);
+    const err = Math.abs(result - exact);
+    if (Number.isNaN(err) || Math.abs(err) !== 0) {
+      method[2].errCount++;
+      errors.push({
+        method: method[0],
+        testVal: test,
+        testDigits: digits-1,
+        result: result
+      });
     }
+    if (Math.abs(err) !== 0 && exact !== 0) {
+      method[2].errSum += err / exact;
+    }
+  });
+}
 
-    logErrors(MULT_DIV, x, digits, mdResult, xrExact);
-    logErrors(TO_FIXED, x, digits, tfResult, xrExact);
-    logErrors(EXP_PM, x, digits, efResult, xrExact);
-    logErrors(R_TF, x, digits, rdResult, xrExact);
-
+// test with random values
+for (let digits = 1; digits < 14; digits++) {
+  for (let i = 0; i < 10000; i++) {
+    testRandom(digits);
+    testRandom(digits, 5);
   }
-
-  // console.table(result);
-  // console.log('\n\n');
 }
 
-let heading =
-  `Testing ${methods.length} different methods of decimal number rounding:\n`;
+// console.log('methods:',methods);
+// console.table(errors);
+
+const report = [];
 methods.forEach(method => {
-  heading += `    • ${method}\n`;
+  report.push({
+    method: method[0],
+    errors: method[2].errCount,
+    "err %": errPct(method),
+    "avg err": errAvg(method)
+  })
 });
-console.log(heading);
 
-testRound(0);
-testRound(1);
-testRound(15);
+console.log('testCount:', testCount);
+console.table(report);
 
-// test with random ints
-for (let i = 0; i < 10000; i++) {
-  let int = Math.round(Math.random() * 100);
-  testRound(int);
-}
-
-const errPct = function (method) {
-  const errval = errCount[method];
-  return +(errval/testCount * 100).toFixed(2) + '%';
+function errPct (method) {
+  const errval = method[2].errCount;
+  return +(+(errval/testCount * 100).toPrecision(4));
 };
 
-const errAvg = function (method) {
-  if (errSum[method] === 'Error') {
+function errAvg (method) {
+  const errSum = method[2].errSum;
+  const errCount = method[2].errCount;
+  if (errSum === 'Error') {
     return 'Error';
   }
-  let rVal = (errCount[method]) ? errSum[method] / errCount[method] : 0;
-  rVal = rVal.toPrecision(4);
+  let rVal = (errCount) ? errSum / errCount : 0;
+  rVal = +(rVal.toPrecision(4));
   return rVal;
 };
 
 
-const report = 'Summary:\n' +
-  `  Total tests: ${testCount}\n` +
-  `  Errors:\n\n`;
+/**
+ * convert number to Float object
+ * @param {number} val
+ * @return {Float}
+ */
+function numToFloat (val) {
+  const [mant, exp] = Number(val)
+    .toExponential()
+    .split('e')
+    .map(str => +str);
+  return {
+    mant,
+    exp
+  };
+}
 
-const summary = [];
-methods.forEach(method => {
-  summary.push({
-    'Method': method,
-    'Errors': errCount[method],
-    'Percent': errPct(method),
-    'Avg Err': errAvg(method)
-  })
-});
+/**
+ * generate random number ending in 5
+ * @param {number} digits - number of digits to produce
+ * @param {number} [shiftDown] - shift number down by this amount to make
+ * small numbers
+ * @return {number[]} - test value and the exact roundoff result
+ */
+function randomTestVal(digits, shiftDown = 0) {
+  const rando = Math.random();
+  const rFloat = numToFloat(rando);
+  // shift down to make small numbers if requested
+  if (shiftDown) {
+    rFloat.exp -= shiftDown;
+  }
+  // shift rando by `digits`
+  const randoUp = +(rFloat.mant + 'e' + (rFloat.exp + digits));
+  // convert to integer
+  let randoInt = Math.round(randoUp);
+  // scrub last digit
+  randoInt = randoInt - (randoInt % 10);
 
-console.log(report);
-console.table(summary);
-console.error('Test complete.');
+  // add 5 for test number
+  let test = randoInt + 5;
+  // shift right by `digits`
+  let testFloat = numToFloat(test);
+  test = +(testFloat.mant + 'e' + (testFloat.exp - digits));
 
-//console.log('Errors:\n');
-//console.table(errors);
+  // add 10 for exact roundoff result
+  let exact = randoInt + 10;
+  // shift right by `digits`
+  let exactFloat = numToFloat(exact);
+  exact = +(exactFloat.mant + 'e' + (exactFloat.exp - digits));
+
+  return [test, exact];
+}
