@@ -2,6 +2,12 @@
 
 Correctly round JavaScript numbers to a fixed number of decimal places
 ---
+![GitHub top language](https://img.shields.io/github/languages/top/terrymorse58/round-tofixed)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/terrymorse58/round-tofixed)
+![David](https://img.shields.io/david/terrymorse58/round-tofixed)
+![NPM License](https://img.shields.io/npm/l/round-tofixed)
+[![Twitter](https://img.shields.io/twitter/follow/terrymorse.svg?style=social&label=@terrymorse)](https://twitter.com/terrymorse)
+
 ## Overview
 **round-tofixed** solves common problems when rounding decimal numbers in JavaScript:
 - the *Math.round()* built-in function only rounds to integers
@@ -11,12 +17,12 @@ Correctly round JavaScript numbers to a fixed number of decimal places
 
 Test results of rounding 1,040,000 random numbers that end with a '5':
 
-Method                 | Errors | Fraction of total |   Avg Err Ratio
+Method                 | Errors | Fraction of total | Avg Err Ratio
 ---------------------- | ------ | ----------------  | ----------
 Number.toFixed         | 93,686 | 9.008 %           |  0.03391
 multiply-then-divide   |  7,780 | 0.7481 %          |  0.005592
 exponent +/-           |   549  | 0.6602 %          |  ***NaN***
-**round-tofixed**       |   0    | 0 %               |  0
+**round-tofixed**      |   0    | 0 %               |  0
 
 ## Usage
 Node.js:
