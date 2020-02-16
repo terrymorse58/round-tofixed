@@ -1,6 +1,6 @@
 {
   "name": "round-tofixed",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Correctly round JavaScript values to a fixed number of decimal places",
   "main": "index.min.js",
   "scripts": {
